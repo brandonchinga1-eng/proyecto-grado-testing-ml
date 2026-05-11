@@ -1,0 +1,49 @@
+* {
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+
+div {
+	border: 1px solid grey;
+	position: absolute;
+	top:50%;
+    	bottom: 0;
+    	padding: 100px;
+	left: 50%;
+    	right: 0;
+    	transform: translate(-50%,-50%);
+  	
+	margin: auto;
+}
+
+div ul{
+    text-align: left;
+    padding: 10px;
+    margin: 10px;
+    list-style-type: none;
+	color: green;
+}
+
+
+p {
+    color: green;
+}
+
+div > form {
+    text-align: center;
+    
+}
+
+button, input, label {
+    font-family: inherit;
+    font-size: 100%;
+    text-align: right;
+    margin: 10px;
+  }
+
+div li {
+    padding: 5px;
+    margin: 10px;
+    font-size: 20px;
+}
