@@ -1,4 +1,4 @@
-﻿Proyecto de Grado — Testing de Software con Machine Learning
+Proyecto de Grado — Testing de Software con Machine Learning
 Prototipo funcional que integra técnicas de Machine Learning (Árbol de Decisión + TF-IDF) con automatización de pruebas (Selenium + Pytest) sobre una aplicación web Django.
 Autor
 Brandon Steven Ibáñez Archila — Universidad de Investigación y Desarrollo (UDI)
