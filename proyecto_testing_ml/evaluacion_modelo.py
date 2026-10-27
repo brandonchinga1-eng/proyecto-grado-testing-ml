@@ -1,6 +1,7 @@
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.svm import SVC
 from sklearn.feature_extraction.text import TfidfVectorizer
 import joblib
 
@@ -128,8 +129,8 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, etiquetas, test_size=0.2, random_state=42
 )
 
-# max_depth=10 para evitar overfitting
-modelo = DecisionTreeClassifier(max_depth=10, random_state=42)
+# Modelo principal: SVM con kernel lineal (mejor desempeño en clasificación de texto)
+modelo = SVC(kernel='linear', random_state=42)
 modelo.fit(X_train, y_train)
 
 y_pred = modelo.predict(X_test)
@@ -148,8 +149,8 @@ print(classification_report(y_test, y_pred))
 # GUARDAR MODELO Y VECTORIZADOR
 # =========================
 
-joblib.dump(modelo, "modelo_decision_tree.pkl")
+joblib.dump(modelo, "modelo_svm.pkl")
 joblib.dump(vectorizer, "vectorizer.pkl")
 print("\n✅ Modelo y vectorizador guardados correctamente.")
-print("   → modelo_decision_tree.pkl")
+print("   → modelo_svm.pkl")
 print("   → vectorizer.pkl")

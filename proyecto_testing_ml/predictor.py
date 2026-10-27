@@ -3,7 +3,7 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-model_path = os.path.join(BASE_DIR, "modelo_decision_tree.pkl")
+model_path = os.path.join(BASE_DIR, "modelo_svm.pkl")
 vectorizer_path = os.path.join(BASE_DIR, "vectorizer.pkl")
 
 model = joblib.load(model_path)

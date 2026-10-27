@@ -22,3 +22,9 @@ Thumbs.db
 # Django
 *.sqlite3
 *.log
+
+venv/
+__pycache__/
+.pytest_cache/
+modelo_arbol_fase1.pkl
+vectorizer_fase1.pkl
