@@ -94,3 +94,28 @@ for depth in [3, 5, 10, 15, None]:
         X, y, cv=skf, scoring='accuracy')
     marca = "  <- seleccionado" if depth == 10 else ""
     print(f"max_depth={str(depth):>4}:  media={sc.mean()*100:.1f}%{marca}")
+
+# ---------- 6. MODELO DEFINITIVO: SVM (kernel lineal) ----------
+# Las secciones 1 a 5 corresponden al modelo inicial (Arbol de Decision).
+# Esta seccion aplica el mismo procedimiento al modelo definitivo (SVM).
+from sklearn.svm import SVC
+print()
+print("=== 6. MODELO DEFINITIVO: SVM (kernel lineal) ===")
+svm = SVC(kernel='linear', random_state=42)
+svm.fit(X_train, y_train)
+y_pred_svm = svm.predict(X_test)
+acc_svm = accuracy_score(y_test, y_pred_svm)
+kappa_svm = cohen_kappa_score(y_test, y_pred_svm)
+print(f"Exactitud (80/20):  {acc_svm:.4f} ({acc_svm*100:.1f}%)")
+print(f"Kappa de Cohen:     {kappa_svm:.4f}")
+for k in [5, 10]:
+    skf = StratifiedKFold(n_splits=k, shuffle=True, random_state=42)
+    sc = cross_val_score(SVC(kernel='linear', random_state=42), X, y, cv=skf, scoring='accuracy')
+    print(f"k={k:2d}:  media={sc.mean()*100:.1f}%  desv={sc.std()*100:.1f}%  "
+          f"rango=[{sc.min()*100:.1f}%-{sc.max()*100:.1f}%]")
+    if k == 10:
+        m, dv, n = sc.mean(), sc.std(), len(sc)
+        e = dv / math.sqrt(n)
+        lo, hi = m - 2.262 * e, m + 2.262 * e
+        print(f"IC 95% (k=10):      [{lo*100:.1f}%, {hi*100:.1f}%]")
+        print(f"El limite inferior {'SUPERA' if lo > 1/7 else 'NO supera'} el azar ({100/7:.1f}%)")
