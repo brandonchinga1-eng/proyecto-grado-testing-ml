@@ -1,73 +1,70 @@
 # Proyecto de Grado — Testing de Software con Machine Learning
 
-Prototipo funcional que integra técnicas de Machine Learning (SVM con kernel lineal + TF-IDF) con automatización de pruebas (Selenium + Pytest) sobre una aplicación web Django.
+Prototipo funcional que integra Machine Learning (**SVM con kernel lineal + TF-IDF**) con automatización de pruebas (Selenium + Pytest) sobre la aplicación web Django-Polls.
 
-## Autor
-
-Brandon Steven Ibáñez Archila — Universidad de Investigación y Desarrollo (UDI)
+**Autor:** Brandon Steven Ibáñez Archila — Universidad de Investigación y Desarrollo (UDI)
 
 ## Modelo de clasificación
 
-El modelo definitivo del prototipo es una **Máquina de Vectores de Soporte (SVM)** con kernel lineal. Esta técnica fue seleccionada tras una comparación experimental de cinco algoritmos (SVM, Random Forest, Naive Bayes, KNN y Árbol de Decisión) sobre el mismo dataset, en la que el SVM obtuvo el mejor desempeño (82.2% bajo validación cruzada k=5, frente a 48.9% del Árbol de Decisión). El análisis del Árbol de Decisión se conserva como parte del proceso investigativo que fundamenta la selección.
+El proyecto partió de un **Árbol de Decisión** (primera fase). Tras evaluarlo (exactitud 38.9 % en partición única; 50.0 % en validación cruzada k=10) se comparó con otras cuatro técnicas sobre el mismo dataset, y las **Máquinas de Vectores de Soporte (SVM)** obtuvieron el mejor desempeño (82.2 % frente a 48.9 % del árbol, k=5). El SVM es el modelo definitivo del prototipo.
 
 ## Estructura
 
-- `django-pools-master/` — Aplicación web Django usada como sistema bajo prueba
-- `proyecto_testing_ml/` — Módulos de ML, predictor, análisis y pruebas automatizadas
-  - `evaluacion_modelo.py` — Entrenamiento y evaluación del clasificador SVM (modelo definitivo)
-  - `fase1_arbol_decision.py` — Primera fase: entrenamiento y evaluación del Árbol de Decisión (modelo inicial)
-  - `predictor.py` — Carga del modelo SVM serializado
-  - `comparar_modelos.py` — Comparación experimental de 5 técnicas de clasificación
-  - `analisis_estadistico.py` — Kappa de Cohen, líneas base, validación cruzada e intervalo de confianza
-  - `test_model.py` — Pruebas unitarias del clasificador (8 tests)
-  - `test_svm_desempeno.py` — Pruebas que validan el desempeño del modelo SVM (6 tests)
-  - `test_inteligente.py` — Pruebas de integración ML + Selenium (7 tests)
-  - `test_selenium.py` — Pruebas de interfaz web (3 tests)
+- `proyecto_testing_ml/` — modelo, scripts de análisis y pruebas
+  - `evaluacion_modelo.py` — entrena y evalúa el modelo definitivo (SVM); contiene el dataset
+  - `predictor.py` — carga el modelo serializado
+  - `fase1_arbol_decision.py` — primera fase: Árbol de Decisión
+  - `comparar_modelos.py` — comparación de cinco técnicas
+  - `analisis_estadistico.py` — kappa, líneas base, validación cruzada, intervalo de confianza
+  - `test_model.py` (8), `test_inteligente.py` (7), `test_selenium.py` (3) — pruebas funcionales
+  - `test_svm_desempeno.py` (6) — pruebas que validan el desempeño del SVM
+- `django-pools-master/` — aplicación Django-Polls (sistema bajo prueba), en `django-pools-master/django-pools-master/django-poll`
 
-## Ejecución
+## Requisitos: dos entornos de Python
 
-### 1. Entrenar el modelo
+La aplicación usa **Django 2.2.24**, que no funciona con Python reciente.
 
-```bash
+| Entorno | Python | Instalación |
+|---|---|---|
+| (a) Modelo y pruebas | 3.10 o superior | `pip install scikit-learn numpy joblib pytest selenium` |
+| (b) Aplicación Django | 3.9 | `pip install Django==2.2.24 pytz==2019.1 sqlparse==0.3.0` |
+
+Se necesita además Google Chrome y Git.
+
+## Ejecución (Windows)
+
+```
+git clone https://github.com/brandonchinga1-eng/proyecto-grado-testing-ml
+cd proyecto-grado-testing-ml
+py -m venv venv
+venv\Scripts\python.exe -m pip install scikit-learn numpy joblib pytest selenium
+py -3.9 -m venv venv_django
+venv_django\Scripts\python.exe -m pip install Django==2.2.24 pytz==2019.1 sqlparse==0.3.0
+```
+
+**Sin servidor** (desde `proyecto_testing_ml`):
+```
+..\venv\Scripts\python.exe evaluacion_modelo.py
+..\venv\Scripts\python.exe comparar_modelos.py
+..\venv\Scripts\python.exe analisis_estadistico.py
+..\venv\Scripts\python.exe -m pytest test_svm_desempeno.py -v
+```
+
+**Con servidor** — terminal 1 (dejarla abierta):
+```
+cd django-pools-master\django-pools-master\django-poll
+..\..\..\venv_django\Scripts\python.exe manage.py migrate
+..\..\..\venv_django\Scripts\python.exe manage.py runserver
+```
+Terminal 2:
+```
 cd proyecto_testing_ml
-python evaluacion_modelo.py
-```
-
-Esto genera `modelo_svm.pkl` y `vectorizer.pkl`.
-
-### 2. Ejecutar la comparación de técnicas
-
-```bash
-python comparar_modelos.py
-```
-
-### 3. Ejecutar el análisis estadístico
-
-```bash
-python analisis_estadistico.py
-```
-
-### 4. Ejecutar las pruebas
-
-Levantar el servidor Django en una terminal:
-
-```bash
-cd django-pools-master/django-pools-master/django-poll
-python manage.py runserver
-```
-
-En otra terminal, ejecutar las pruebas:
-
-```bash
-cd proyecto_testing_ml
-pytest -v
+..\venv\Scripts\python.exe -m pytest test_model.py test_inteligente.py test_selenium.py -v
 ```
 
 ## Resultados
 
-- Dataset: 90 muestras, 7 categorías
-- Modelo seleccionado: SVM (kernel lineal)
-- Exactitud del modelo: 61% (partición única) / 82.2% (validación cruzada k=5)
-- Kappa de Cohen: 0.55 (acuerdo moderado)
-- Intervalo de confianza 95%: [79.3%, 91.8%]
-- Suite de pruebas: 24 tests (8 unitarios + 6 de desempeño SVM + 7 de integración + 3 de interfaz). Los 14 primeros no requieren servidor; los 10 de integración/interfaz requieren Django activo y Chrome.
+- Dataset: 90 muestras, 7 categorías (redactado por un único autor; ver limitaciones en el informe)
+- SVM: 61.1 % en partición única (18 muestras); 82.2 % (k=5) y 85.6 % (k=10); kappa de Cohen 0.55; IC 95 % [79.3 %, 91.8 %]
+- Árbol de Decisión (fase inicial): 38.9 % en partición única; 50.0 % (k=10)
+- Pruebas: 18 de 18 aprobadas (42.60 s) y 6 de 6 de desempeño del SVM
